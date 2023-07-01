@@ -1,62 +1,61 @@
-#include "main.h"
+#include <unistd.h>
 #include <stdarg.h>
+#include "main.h"
 
 /**
- * _printf - prints formatted text to stdout
+ * _printf - prints formatted text to standard output
+ * @format: string to print to stdout
+ *@...: variadic parameters
  *
- * @format: the string to print
- * @...: variadic arguments
- *
- * Return: number of printed characters
+ * Return: number of characters printed.
  */
 
 int _printf(const char *format, ...)
 {
+	int i = 0;
 	int count = 0;
-	char *str;
+	int n = 0;
+	va_list printer;
 
-	va_list print;
+	va_start(printer, format);
+	int (*fun_ptr)(va_list);
 
-	va_start(print, format);
+	if (format == NULL)
+		return (-1);
 
-	while (*format)
+	while (format[i] != '\0')
 	{
-		if (*format == '%')
+		if (format[i] != '%')
 		{
-			format++;
-
-			switch (*format)
+			n = write(1, &format[i], 1);
+			count += n;
+			i++;
+			continue;
+		}
+		if (format[i] == '%')
+		{
+			fun_ptr = specifier(&format[i + 1]);
+			if (fun_ptr != NULL)
 			{
-				case 'c':
-					_putchar(va_arg(print, int));
-					count++;
-					break;
-				case 's':
-					str = va_arg(print, char *);
-					while (*str)
-					{
-						_putchar(*str);
-						count++;
-						str++;
-					}
-					break;
-				case '%':
-					_putchar('%');
-					count++;
-					break;
-				default:
-					break;
+				n = fun_ptr(printer);
+				count += n;
+				i = i + 2;
+				continue;
+			}
+
+			if (format[i + 1] == '\0')
+			{
+				break;
+			}
+
+			if (format[i + 1] != '\0')
+			{
+				n = write(1, &format[i + 1], 1);
+				count += n;
+				i = i + 2;
+				continue;
 			}
 		}
-		else
-		{
-			_putchar(*format);
-			count++;
-		}
-			format++;
 	}
-
-		va_end(print);
-
-		return (count);
+	return (count);
 }
