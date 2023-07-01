@@ -28,7 +28,7 @@ int print_dec(va_list printer)
 			i++;
 	}
 
-	for (i; i >= 0; i--)
+	for (; i >= 0; i--)
 	{
 		x[0] = ('0' + arr[i]);
 		count += write(1, x, 1);

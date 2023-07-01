@@ -16,9 +16,8 @@ int _printf(const char *format, ...)
 	int count = 0;
 	int n = 0;
 	va_list printer;
-
-	va_start(printer, format);
 	int (*fun_ptr)(va_list);
+	va_start(printer, format);
 
 	if (format == NULL)
 		return (-1);
